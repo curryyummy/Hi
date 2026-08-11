@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entropy-Based Financial Asset Pricing — 雙欄批注精讀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#12263f;
+  --navy2:#1b3a5c;
+  --paper:#faf7f0;
+  --ink:#22292f;
+  --muted:#6b7280;
+  --cream:#f0ece2;
+  --line:#ddd6c8;
+  --c-thesis:#ffe58a;      /* 黃 核心論點 */
+  --c-thesis-b:#c9a227;
+  --c-term:#ffd2cc;        /* 紅 關鍵概念 */
+  --c-term-b:#c0392b;
+  --c-evi:#cfe3ff;         /* 藍 實證證據 */
+  --c-evi-b:#2b6cb0;
+  --c-conc:#d3f0d3;        /* 綠 讓步反駁 */
+  --c-conc-b:#2f855a;
+  --c-meth:#e6d9f5;        /* 紫 方法論 */
+  --c-meth-b:#7c3aed;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans','Noto Serif TC',sans-serif;line-height:1.7}
+
+/* ============ 頂部導航 ============ */
+header.topbar{background:var(--navy);color:#f5f2ea;padding:26px 28px 20px}
+header.topbar .wrap{max-width:1280px;margin:0 auto}
+header.topbar h1{font-family:'Lora',serif;font-size:1.55rem;font-weight:600;letter-spacing:.2px}
+header.topbar h1 .zh{font-family:'Noto Serif TC',serif;font-weight:500;font-size:1.05rem;color:#cfd9e6;display:block;margin-top:4px}
+.course{margin-top:8px;font-size:.85rem;color:#9fb3c8}
+.course b{color:#dbe6f1;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:16px;font-size:.82rem}
+.legend .chip{display:inline-flex;align-items:center;gap:7px;color:#e8eef5}
+.legend .sw{width:15px;height:15px;border-radius:3px;border:1.5px solid rgba(255,255,255,.35)}
+.sw.y{background:var(--c-thesis)} .sw.r{background:var(--c-term)} .sw.b{background:var(--c-evi)} .sw.g{background:var(--c-conc)} .sw.p{background:var(--c-meth)}
+
+/* ============ 章節導航條 ============ */
+nav.secnav{position:sticky;top:0;z-index:50;background:var(--navy2);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+nav.secnav .wrap{max-width:1280px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 16px;-webkit-overflow-scrolling:touch}
+nav.secnav a{flex:0 0 auto;color:#c6d4e2;text-decoration:none;font-size:.82rem;font-weight:500;padding:11px 13px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.secnav a:hover{color:#fff;border-bottom-color:#5c86b5;background:rgba(255,255,255,.05)}
+
+/* ============ 主體 ============ */
+main{max-width:1280px;margin:0 auto;padding:34px 24px 60px}
+section.paper-sec{margin-bottom:14px}
+h2.sec-title{font-family:'IBM Plex Sans',sans-serif;font-size:1.02rem;font-weight:700;color:var(--navy);
+  text-transform:uppercase;letter-spacing:.08em;border-left:5px solid var(--navy);padding:4px 0 4px 12px;
+  margin:38px 0 6px;background:linear-gradient(90deg,rgba(18,38,63,.06),transparent 70%)}
+h3.subsec{font-family:'Lora',serif;font-size:1.02rem;font-weight:600;color:var(--navy2);margin:26px 0 4px;padding-left:12px;border-left:3px solid #b9c8d8}
+
+/* 段落列：左文右批 */
+.row{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;padding:20px 0;border-bottom:1px dashed var(--line);align-items:start}
+.row:last-child{border-bottom:none}
+
+/* 左欄 */
+.src{min-width:0}
+.en{font-family:'Lora',serif;font-size:.98rem;line-height:1.85;color:#2a2f36;text-align:justify}
+.en .pno{display:inline-block;font-family:'IBM Plex Sans',sans-serif;font-size:.68rem;font-weight:700;color:#fff;background:#8a97a8;border-radius:3px;padding:1px 6px;margin-right:8px;vertical-align:2px}
+.zh-tr{margin-top:14px;background:var(--cream);border-left:3px solid #b7ab8f;padding:13px 16px;font-family:'Noto Serif TC',serif;font-size:.93rem;line-height:1.95;color:#3d3a32;border-radius:0 4px 4px 0}
+.zh-tr::before{content:"譯";font-family:'IBM Plex Sans',sans-serif;font-size:.66rem;font-weight:700;color:#8d8264;background:#e2dbc9;padding:1px 7px;border-radius:3px;margin-right:8px;vertical-align:1px}
+.divider{border:none;border-top:1px solid var(--line);margin:14px 0 0}
+
+/* 高亮 */
+mark{padding:1px 3px;border-radius:3px;background:transparent}
+mark.y{background:var(--c-thesis);box-shadow:inset 0 -1px 0 var(--c-thesis-b)}
+mark.r{background:var(--c-term);box-shadow:inset 0 -1px 0 var(--c-term-b)}
+mark.b{background:var(--c-evi);box-shadow:inset 0 -1px 0 var(--c-evi-b)}
+mark.g{background:var(--c-conc);box-shadow:inset 0 -1px 0 var(--c-conc-b)}
+mark.p{background:var(--c-meth);box-shadow:inset 0 -1px 0 var(--c-meth-b)}
+
+/* 公式塊 */
+.eq{font-family:'Lora',serif;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:.97rem;display:flex;justify-content:space-between;align-items:center;gap:12px;overflow-x:auto}
+.eq .no{font-family:'IBM Plex Sans',sans-serif;font-size:.78rem;color:var(--muted);flex:0 0 auto}
+.eq i{font-style:italic}
+.eq sub,.eq sup{font-size:.72em}
+
+/* 右欄批注卡 */
+.note{background:#fdfcf8;border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:6px;padding:13px 15px;font-size:.85rem;line-height:1.8;box-shadow:0 1px 3px rgba(0,0,0,.05);position:sticky;top:56px}
+.note .fn{margin-bottom:7px}
+.note .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:10px;margin-right:6px;margin-bottom:4px}
+.tag.func{background:#e3ebf4;color:#25547f}
+.tag.role{background:#efe6f8;color:#5b21b6}
+.tag.warn{background:#fbeaea;color:#a12b22}
+.tag.tip{background:#e5f3e8;color:#256b3f}
+.note p{margin:5px 0}
+.note b{color:var(--navy)}
+.note .lbl{font-weight:700;color:var(--navy);font-size:.8rem}
+.note.model{border-left-color:var(--c-meth-b);background:#fbf9fe}
+.note.model .mhead{font-weight:700;color:var(--c-meth-b);font-size:.83rem;margin-bottom:6px}
+
+/* 底部總覽 */
+.overview{margin-top:52px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.overview .ohead{background:var(--navy);color:#f0f4f8;padding:16px 22px;font-weight:700;font-size:1.05rem;letter-spacing:.03em}
+.overview .obody{padding:22px 26px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:6px 0 18px}
+.chain .step{flex:1 1 150px;background:#f4f1e8;border:1px solid var(--line);border-top:4px solid var(--navy2);border-radius:6px;padding:10px 12px;font-size:.82rem;line-height:1.65}
+.chain .step b{display:block;font-size:.85rem;color:var(--navy);margin-bottom:4px}
+.chain .arrow{align-self:center;color:#98a3ad;font-weight:700;flex:0 0 auto}
+.claim{background:var(--c-thesis);border-left:5px solid var(--c-thesis-b);padding:13px 17px;border-radius:0 6px 6px 0;font-family:'Noto Serif TC',serif;font-size:.98rem;margin:14px 0 18px}
+.sw2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sw2 .box{border-radius:6px;padding:13px 16px;font-size:.87rem;line-height:1.8}
+.sw2 .strong{background:#eaf6ec;border:1px solid #bfdec7;border-left:5px solid var(--c-conc-b)}
+.sw2 .weak{background:#fdeeec;border:1px solid #eecbc5;border-left:5px solid var(--c-term-b)}
+.sw2 b{display:block;margin-bottom:4px}
+
+footer.credit{max-width:1280px;margin:0 auto;padding:18px 24px 46px;font-size:.76rem;color:var(--muted)}
+
+/* ============ 響應式 ============ */
+@media (max-width:920px){
+  .row{grid-template-columns:1fr;gap:14px}
+  .note{position:static;top:auto}
+  .sw2{grid-template-columns:1fr}
+  header.topbar h1{font-size:1.25rem}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <h1>Entropy-Based Financial Asset Pricing
+      <span class="zh">基於熵的金融資產定價 — 論證結構精讀批注版</span>
+    </h1>
+    <div class="course">Ormos, M. &amp; Zibriczky, D. (2014). <i>PLoS ONE</i> 9(12): e115742 ｜ <b>學士論文核心文獻 A-1</b> ｜ 主題：Shannon 熵作為風險度量的資產定價應用（CC-BY 開放取用，依原授權轉載標注）</div>
+    <div class="legend">
+      <span class="chip"><span class="sw y"></span>核心論點 / Thesis</span>
+      <span class="chip"><span class="sw r"></span>關鍵概念 / 術語</span>
+      <span class="chip"><span class="sw b"></span>實證證據 / 數據</span>
+      <span class="chip"><span class="sw g"></span>讓步 / 反駁處理</span>
+      <span class="chip"><span class="sw p"></span>方法論說明</span>
+    </div>
+  </div>
+</header>
+
+<nav class="secnav">
+  <div class="wrap">
+    <a href="#abstract">摘要</a>
+    <a href="#intro">引言</a>
+    <a href="#data">數據</a>
+    <a href="#method-bg">方法論·熵的譜系</a>
+    <a href="#method-def">熵函數定義</a>
+    <a href="#method-est">熵的估計模型</a>
+    <a href="#method-risk">風險度量模型</a>
+    <a href="#method-eval">解釋力與預測力</a>
+    <a href="#res-div">結果·分散化</a>
+    <a href="#res-long">長期解釋力</a>
+    <a href="#res-trend">牛熊市場</a>
+    <a href="#res-pred">樣本外預測</a>
+    <a href="#conclusion">結論</a>
+    <a href="#overview">論證總覽</a>
+  </div>
+</nav>
+
+<main>
+<!-- ====================== 摘要 ====================== -->
+<section class="paper-sec" id="abstract">
+<h2 class="sec-title">Abstract ｜ 摘要</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶1</span>We investigate <mark class="r">entropy as a financial risk measure</mark>. <mark class="y">Entropy explains the equity premium of securities and portfolios in a simpler way and, at the same time, with higher explanatory power than the beta parameter of the capital asset pricing model.</mark> For asset pricing we define the <mark class="r">continuous entropy</mark> as an alternative measure of risk. Our results show that <mark class="b">entropy decreases in the function of the number of securities involved in a portfolio in a similar way to the standard deviation</mark>, and that <mark class="b">efficient portfolios are situated on a hyperbola in the expected return – entropy system</mark>. For empirical investigation we use <mark class="p">daily returns of 150 randomly selected securities for a period of 27 years</mark>. Our regression results show that <mark class="b">entropy has a higher explanatory power for the expected return than the capital asset pricing model beta</mark>. Furthermore we show the time varying behavior of the beta along with entropy.</p>
+    <div class="zh-tr">本文將熵視為一種金融風險度量進行考察。相較於資本資產定價模型（CAPM）中的貝塔係數，熵不僅能以更簡潔的方式解釋個別證券與投資組合的股權溢酬，其解釋力亦更高。我們定義連續熵作為替代性風險度量，用於資產定價。結果顯示：熵隨投資組合內證券數量增加而遞減，行為與標準差相似；且在「期望報酬－熵」座標系中，效率投資組合落在一條雙曲線上。實證部分採用 150 檔隨機抽取證券、橫跨 27 年的日報酬資料。迴歸結果顯示，熵對期望報酬的解釋力高於 CAPM 貝塔；此外，本文也呈現了貝塔與熵隨時間變動的行為。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：全文縮影</span><span class="tag role">邏輯角色：主張宣告</span></div>
+    <p><span class="lbl">① 功能</span>　一段之內完成「概念→主張→證據→方法」四件事，是典型的實證財務摘要寫法。</p>
+    <p><span class="lbl">② 邏輯角色</span>　黃色句是全文唯一的 thesis：<b>熵比 CAPM 貝塔「更簡單且解釋力更高」</b>。後續所有章節都是對這句話的分項驗證。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　注意「simpler ＋ higher explanatory power」是<b>雙重主張</b>——簡潔性與解釋力需分開驗證；正文對「簡潔」的論證其實相對薄弱（僅靠提出估計公式）。對你的論文啟示：H1 也應避免把兩個可分離的主張捆在同一句假設裡。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 引言 ====================== -->
+<section class="paper-sec" id="intro">
+<h2 class="sec-title">Introduction ｜ 引言</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶2</span><mark class="y">We build an equilibrium capital asset pricing model by applying a novel risk measure, the entropy.</mark> <mark class="r">Entropy characterizes the uncertainty or measures the dispersion of a random variable.</mark> In our particular case, it characterizes the uncertainty of stock and portfolio returns. In modern Markowitz portfolio theory and equilibrium asset pricing models we apply linear regressions. <mark class="g">This methodology supposes that the returns are stationary and normally distributed; however, this is not actually the case.</mark> <mark class="y">Entropy, on the other hand, does not have this kind of boundary condition.</mark> The main goal of this paper is to apply entropy as a novel risk measure. As a starting point <mark class="p">even the density function itself has to be estimated</mark>. In the traditional asset pricing model there is equilibrium between expected return and the beta parameter, which is <mark class="r">the covariance–variance ratio between the market portfolio and the investigated investment opportunity</mark>. <mark class="g">If the random variable is normally distributed then the entropy follows its standard deviation; thus in the ideal case there is no difference between the two risk measures.</mark> <mark class="b">However, our results show that there is a significant difference between the standard deviation, or beta, and the entropy of a given security or portfolio.</mark></p>
+    <div class="zh-tr">本文以一種新穎的風險度量——熵——構建均衡資產定價模型。熵刻畫隨機變數的不確定性或離散程度；在本文脈絡下，即刻畫股票與投資組合報酬的不確定性。Markowitz 組合理論與均衡定價模型依賴線性迴歸，此方法隱含報酬「平穩且常態分布」的假設，但實際數據並不符合。熵則不受此類邊界條件約束。本文的主要目標即是將熵應用為新的風險度量；而其起點，是連密度函數本身都必須先行估計。傳統定價模型中，期望報酬與貝塔（即標的與市場組合之間的共變異數—變異數比值）處於均衡關係。若隨機變數服從常態分布，熵將與標準差同步變動，理想情況下兩種風險度量並無差異；然而本文結果顯示，對給定證券或組合而言，標準差（或貝塔）與熵之間存在顯著差異。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：引出問題＋研究缺口</span><span class="tag role">邏輯角色：動機鏈第一環</span></div>
+    <p><span class="lbl">① 功能</span>　「傳統工具的假設不成立 → 需要無此假設的新工具」——標準的 gap-filling 動機結構。</p>
+    <p><span class="lbl">② 邏輯角色</span>　注意綠色兩處的<b>讓步策略</b>：作者主動承認「常態下熵≡標準差的函數」，先立起最強反方（熵是冗餘的），再用實證差異推翻。這是全文最漂亮的論證設計。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「熵無需分布假設」是理論優勢，但下一節馬上暴露代價：<b>密度函數必須非參數估計，引入新的自由參數（bin 數、頻寬）</b>。優勢與代價一體兩面——你的proposal動機段（變異數工具不足→為何用熵）可以直接借用此讓步-反轉結構。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶3</span><mark class="y">In this paper we show that entropy offers an ideal alternative for capturing the risk of an investment opportunity.</mark> If we explain the return of a wide sample of securities and portfolios with different risk measures then on an <mark class="p">ordinary least squares (OLS) regression setting</mark> <mark class="b">the explanatory power is much higher in the case of the entropy measure of risk than in the case of the traditional measures, both in-sample and out-of-sample</mark>. We show that <mark class="b">entropy reduction in line with diversification behaves similarly to standard deviation</mark>; however at the same time <mark class="y">it captures a beta-like systematic risk of single securities or non-efficient portfolios as well</mark>. <mark class="b">For well-diversified portfolios the explanatory power of entropy is 1.5 times higher than that of the capital asset pricing model (CAPM) beta.</mark></p>
+    <div class="zh-tr">本文主張，熵是捕捉投資機會風險的理想替代方案。若以不同風險度量解釋大樣本證券與投資組合的報酬，在 OLS 迴歸架構下，無論樣本內或樣本外，熵的解釋力都遠高於傳統度量。我們證明：熵隨分散化遞減的行為與標準差相似，但同時又能像貝塔一樣捕捉單一證券或非效率組合的系統性風險。對充分分散的投資組合而言，熵的解釋力是 CAPM 貝塔的 1.5 倍。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：貢獻預告</span><span class="tag role">邏輯角色：主張的操作化</span></div>
+    <p><span class="lbl">① 功能</span>　把抽象 thesis 轉譯為三個可檢驗命題：(a) R² 更高（樣本內外）；(b) 分散化行為似標準差；(c) 兼具貝塔式系統風險捕捉。</p>
+    <p><span class="lbl">② 邏輯角色</span>　黃色句「兼具兩者之長」是全文的<b>核心賣點</b>：熵 = 總風險度量（似 σ）＋ 定價能力（勝 β）。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「1.5 倍」此處未附條件，讀到 Fig.4 才知道它只在<b>充分分散組合</b>且以 Rényi 熵計算時成立。摘要式數字前置是有效的修辭，但需在正文兌現條件——你的proposal若引用此數字，務必註明適用範圍。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶4</span>We also test and compare entropy with standard risk measures for market circumstances that are increasing and decreasing, and find that <mark class="b">the explanatory power of entropy is significantly higher in a bullish market, but lower for a bearish market</mark>. <mark class="g">Our results for bullish and bearish regimes show that the different risk measures behave similarly in terms of the positive and negative relationship between risk and return. This behavior underlines the fact that the entropy-based risk measure can give contradictory results in the same way as traditional risk estimations in upward and downward regimes.</mark> We also compare the entropy-based risk measures with the CAPM beta in and out of sample, which gives information on <mark class="r">the predictive power</mark> of the different methods. As the CAPM beta measures <mark class="r">the systematic risk</mark> only, while entropy-based risk measures and the standard deviation capture <mark class="r">the total risk</mark> of the investment, our results are shocking, that <mark class="b">entropy gives almost twice as high an average explanatory power as the beta, with an average of 40% less standard deviation</mark>. A further contribution of the paper is that <mark class="p">we introduce a simple method to estimate the entropy of a security or portfolio return</mark>.</p>
+    <div class="zh-tr">本文亦在上漲與下跌兩種市場情境中檢驗熵與標準風險度量的表現，發現熵在牛市中解釋力顯著較高，在熊市中則較低。牛熊分樣的結果顯示，各風險度量在風險—報酬正負關係上的行為一致；這也說明基於熵的風險度量與傳統度量一樣，會在漲跌不同情境下給出方向相反的結果。此外，本文比較熵與 CAPM 貝塔的樣本內外表現，藉此衡量各方法的預測力。由於貝塔僅衡量系統性風險，而熵與標準差捕捉的是總風險，結果令人震驚：熵的平均解釋力幾乎是貝塔的兩倍，且其（解釋力的）變異低約 40%。本文的另一項貢獻，是提出一套估計證券或組合報酬熵的簡便方法。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：預先讓步＋貢獻清單</span><span class="tag role">邏輯角色：誠實性信號</span></div>
+    <p><span class="lbl">① 功能</span>　在引言就<b>主動揭露不利結果</b>（熊市中熵輸給貝塔），並將其重新框架為「熵與傳統度量同樣具情境依賴性」——化弱點為性質。</p>
+    <p><span class="lbl">② 邏輯角色</span>　綠色段是典型的 concession-reframe：不否認缺陷，而是論證缺陷「不專屬於熵」。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「shocking」在學術寫作中偏口語，且「40% less standard deviation」語義含混（指的是 R² 分布的相對標準差，非報酬的標準差），讀到 Table 1 才能還原。<b>對你的啟示</b>：熵的「方向盲」問題（H1 缺陷）在本文同樣存在——熵在牛熊市給出反向斜率，正是「熵無方向性」的實證體現，可直接引為你重構 H1（熵×落後報酬交互項）的文獻依據。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 數據 ====================== -->
+<section class="paper-sec" id="data">
+<h2 class="sec-title">Data ｜ 數據</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶5</span>In our empirical analysis we apply <mark class="b">daily returns from the Center for Research in Security Prices (CRSP) database for the period from 1985 to the end of 2011</mark>. We <mark class="p">randomly select 150 securities from the S&amp;P500 index components that are available for the full period</mark>. The market return is <mark class="r">the CRSP value-weighted index return premium above the risk-free rate</mark>. The index tracks the return of the NYSE, AMEX and NASDAQ stocks. The risk-free rate is <mark class="r">the return of the one-month Treasury bill</mark> from the CRSP. <mark class="p">We use daily returns because they are not normally distributed</mark> (see S1 Table). Erdős and Ormos (2009) and Erdős et al. (2011) describe the main difficulties of modeling asset prices with non-normal returns. The daily return calculation enables us to compare different risk measures.</p>
+    <div class="zh-tr">實證分析使用 CRSP 資料庫 1985 年至 2011 年底的日報酬資料，自 S&amp;P500 成分股中隨機抽取全期間皆有資料的 150 檔證券。市場報酬採 CRSP 市值加權指數超越無風險利率的溢酬，該指數涵蓋 NYSE、AMEX 與 NASDAQ；無風險利率為 CRSP 一個月期國庫券報酬。之所以採用日頻資料，正是因為日報酬不服從常態分布（見附表 S1）——這使得非常態環境下各風險度量的比較成為可能。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：界定樣本與變數</span><span class="tag role">邏輯角色：證據的合法性基礎</span></div>
+    <p><span class="lbl">① 功能</span>　交代資料來源、抽樣、市場與無風險利率的操作型定義。</p>
+    <p><span class="lbl">② 邏輯角色</span>　「刻意選日頻因其非常態」是<b>把數據選擇變成論證武器</b>：非常態正是熵優於變異數工具的前提條件，資料設計與 thesis 互相鎖定。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「全期間皆有資料」的篩選引入<b>存活者偏誤</b>（survivorship bias）——27 年存活的 S&amp;P500 成分股系統性偏向大型績優股，作者未處理此點。<b>對你的啟示</b>：TWSE 樣本若也要求全期上市，需在限制一節明示同樣的偏誤；另外你可對應寫出 TEJ 資料、加權指數與台灣無風險利率的操作型定義，結構可直接平移。</p>
+  </aside>
+</div>
+</section>
+<!-- ====================== 方法論：熵的譜系 ====================== -->
+<section class="paper-sec" id="method-bg">
+<h2 class="sec-title">Methodology ｜ 方法論 · 熵的思想譜系</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶6</span>Entropy is a mathematically-defined quantity that is generally used for characterizing the probability of outcomes in a system that is undergoing a process. It was originally introduced in <mark class="r">thermodynamics by Rudolf Clausius</mark> to measure the ratio of transferred heat through a reversible process in an isolated system. In statistical mechanics the interpretation of entropy is the measure of uncertainty about the system that remains after observing its macroscopic properties; this application was introduced by <mark class="r">Ludwig Boltzmann</mark>, who defined the <mark class="r">configuration entropy</mark> as the diversity of specific ways in which the components of the system may be arranged. There is an important application of entropy in information theory as well, and this is often called <mark class="r">Shannon entropy</mark>. The entropy quantifies <mark class="r">the expected value of the information in a message</mark> or, in other words, the amount of information that is missing before the message is received. <mark class="y">The more unpredictable (uncertain) the message that is provided by the system, the greater the expected value of the information contained in the message. Consequently, greater uncertainty in the messages of the system means higher entropy.</mark> Because the entropy equals the amount of expected information in a message, it measures the maximum compression ratio that can be applied without losing information.</p>
+    <div class="zh-tr">熵是一個數學上定義明確的量，用於刻畫過程中系統各種結果出現的機率。它最初由 Clausius 在熱力學中提出，衡量孤立系統可逆過程中的熱量傳遞比率；統計力學中，Boltzmann 將其詮釋為觀察到宏觀性質（壓力、溫度、體積）後系統仍殘餘的不確定性，並定義「組態熵」為系統組成元素可能排列方式的多樣性。熵在資訊理論中亦有關鍵應用，即 Shannon 熵：它量化訊息中資訊量的期望值，或說訊息被接收之前所缺失的資訊量。系統輸出的訊息愈難預測（愈不確定），訊息所含資訊的期望值就愈大——因此，不確定性愈高，熵愈高。由於熵等於訊息的期望資訊量，它同時度量了無損壓縮所能達到的最大壓縮率。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：概念溯源</span><span class="tag role">邏輯角色：建立術語的學科正當性</span></div>
+    <p><span class="lbl">① 功能</span>　三段譜系（熱力學→統計力學→資訊理論）為「熵＝不確定性度量」提供跨學科背書。</p>
+    <p><span class="lbl">② 邏輯角色</span>　黃色句是本文將熵移植到金融的<b>橋接命題</b>：不確定性↑ ⇒ 熵↑，而「報酬的不確定性」正是金融學對風險的直覺定義。三段式鋪陳都是為了讓這一步跳躍顯得自然。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　從「訊息的不確定性」到「投資風險」的類比<b>未經論證直接採用</b>——資訊熵度量的是分布的「平坦程度」，與投資人厭惡的「下方風險」並非同一概念。這是你proposal理論一節可深入批評的縫隙，也呼應你已記錄的重點：熵無方向性。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶7</span>In financial applications, <mark class="b">Philippatos and Wilson find that entropy is more general and has some advantages over standard deviation</mark> in portfolio management. <mark class="g">Kirchner and Zunckel argue that in financial economics entropy is a better tool for capturing the reduction of risk by diversification; however, in their study they suppose that the assets are Gaussian.</mark> <mark class="b">Dionisio et al. argue that entropy observes the effect of diversification and is a more general measure of uncertainty than variance, since it uses more information about the probability distribution.</mark> Regarding the predictability of stock market returns, <mark class="b">Maasoumi and Racine point out that entropy has several desirable properties and is capable of efficiently capturing nonlinear dependencies in return time series</mark>. <mark class="g">Nawrocki and Harding propose applying state-value weighted entropy as a measure of investment risk; however, they are dealing with the discrete case.</mark> <mark class="g">All the above academic papers recognize that entropy could be a good measure of risk; however, it seems to be difficult to use this measure.</mark> <mark class="y">Our main motivation is to show that an entropy-based risk measure is, on the one hand, more precise, and, on the other hand, no more complicated to use than variance equilibrium models.</mark></p>
+    <div class="zh-tr">金融應用方面：Philippatos 與 Wilson 發現熵較標準差更具一般性，在組合管理上有其優勢；Kirchner 與 Zunckel 主張熵更能捕捉分散化的風險降低效果，但其研究假設資產服從高斯分布；Dionisio 等人認為熵利用了機率分布的更多資訊，是比變異數更一般的不確定性度量；Maasoumi 與 Racine 指出熵具備多項理想性質，能有效捕捉報酬時間序列中的非線性相依；Nawrocki 與 Harding 則提出以狀態值加權熵度量投資風險，惟僅處理離散情形。上述文獻皆承認熵可能是良好的風險度量，卻也共同顯示此度量「難以使用」。本文的核心動機正在於此：證明基於熵的風險度量一方面更精確，另一方面其使用難度並不高於變異數均衡模型。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：文獻回顧＋定位缺口</span><span class="tag role">邏輯角色：從共識中提煉未解問題</span></div>
+    <p><span class="lbl">① 功能</span>　每篇文獻都以「貢獻＋侷限」句式呈現（綠色標注處），累積出共同缺口：<b>大家都說熵好，但沒人讓它好用</b>。</p>
+    <p><span class="lbl">② 邏輯角色</span>　缺口定義決定了貢獻聲明的形狀——本文的貢獻不是「發現熵有用」（前人已說），而是「精確＋易用」的雙重承諾。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　這種「侷限式文獻回顧」是你proposal文獻一節的最佳模板：Risso (2008)、Shternshis et al. (2022)、Papla &amp; Siedlecki (2024) 各自的侷限（危機期選擇、符號化方式、市場範圍）可依同樣句式排列，最後收攏到「台灣高散戶市場尚無系統性檢驗」的缺口。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 熵函數定義 ====================== -->
+<section class="paper-sec" id="method-def">
+<h2 class="sec-title">熵函數定義 ｜ 離散熵與微分熵</h2>
+
+<h3 class="subsec">Discrete entropy function ｜ 離散熵函數</h3>
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶8</span>Entropy functions can be divided into two main types, <mark class="r">discrete and differential entropy functions</mark>. Let X* be a discrete random variable with outcomes o<sub>1</sub>,…,o<sub>n</sub> and probabilities p<sub>i</sub> = Pr(X*=o<sub>i</sub>), p<sub>i</sub> ≥ 0, Σp<sub>i</sub> = 1. <mark class="p">The generalized discrete entropy function (Rényi) for the variable X* is defined as:</mark></p>
+    <div class="eq"><span><i>H</i><sub>a</sub>(<i>X</i>*) = <sup>1</sup>⁄<sub>(1−a)</sub> · log(Σ<sub>i=1..n</sub> <i>p</i><sub>i</sub><sup>a</sup>)</span><span class="no">(1)</span></div>
+    <p class="en">where <mark class="r">a is the order of entropy</mark> (a ≥ 0, a ≠ 1), and the base of the logarithm is 2. <mark class="p">The order of entropy expresses the weight taken into account in each outcome; if the order of entropy is lower, the more likely outcomes are underweighted, and vice versa.</mark> The most widely used orders are a=1 and a=2. The substitution of a=1 into (1) results in a division by zero; it can be shown, using l'Hôpital's rule, that H<sub>a</sub> converges to the <mark class="r">Shannon entropy</mark>:</p>
+    <div class="eq"><span><i>H</i><sub>1</sub>(<i>X</i>*) = −Σ<sub>i=1..n</sub> <i>p</i><sub>i</sub> log(<i>p</i><sub>i</sub>)</span><span class="no">(2)</span></div>
+    <p class="en">The case of a=2 is called <mark class="r">collision entropy</mark>, referred to as <mark class="r">"Rényi entropy"</mark> further in the paper:</p>
+    <div class="eq"><span><i>H</i><sub>2</sub>(<i>X</i>*) = −log(Σ<sub>i=1..n</sub> <i>p</i><sub>i</sub><sup>2</sup>)</span><span class="no">(3)</span></div>
+    <p class="en">H<sub>a</sub>(X) is a non-increasing function in a, and both entropy measures are greater than zero provided that there is a finite number of possible outcomes: <span style="white-space:nowrap">0 &lt; H<sub>2</sub>(X*) ≤ H<sub>1</sub>(X*)</span> (4).</p>
+    <div class="zh-tr">熵函數分為離散與微分（連續）兩大類。設 X* 為離散隨機變數，結果為 o₁,…,oₙ，對應機率 pᵢ。廣義離散熵（Rényi 族）如式 (1)，其中 a 為熵的階數（a ≥ 0 且 a ≠ 1），對數底為 2。階數決定各結果的權重：階數愈低，高機率結果被壓低權重的程度愈大，反之亦然。最常用的是 a=1 與 a=2。a=1 直接代入會除以零，但以 l'Hôpital 法則取極限可證其收斂至 Shannon 熵，即式 (2)；a=2 稱為碰撞熵，本文之後統稱 Rényi 熵，即式 (3)。Hₐ(X) 是 a 的非遞增函數，在有限結果數下兩種熵皆為正值，且恆有 0 &lt; H₂ ≤ H₁，如式 (4)。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ①：Rényi 廣義熵族</div>
+    <p><b>統一框架</b>：式 (1) 不是單一公式，而是<b>一族</b>以階數 a 為參數的熵。a 像一個「聚焦旋鈕」：a→0 時所有可能結果一視同仁（只數種類）；a=1 時按機率加權（Shannon）；a→∞ 時只看最大機率結果。</p>
+    <p><b>Shannon (a=1)</b>：期望驚訝度，−Σp·log p。對分布尾部相對敏感。</p>
+    <p><b>Rényi/碰撞熵 (a=2)</b>：−log Σp²。Σp² 是「隨機抽兩次落在同一格」的機率，故名碰撞熵；它<b>放大高機率事件的權重</b>，對尾部較不敏感——這解釋了後文為何 Rényi 熵長期解釋力最高（金融報酬中央峰態厚，主要資訊集中在高頻小報酬區）卻在短期樣本較不穩。</p>
+    <p><span class="tag tip">與你論文的連結</span>你的 proposal 目前只用 Shannon 熵。本文提供現成理由，可在「未來延伸」中提及 a=2 作為穩健性檢驗，展示你知道熵是一個族而非單點。</p>
+  </aside>
+</div>
+
+<h3 class="subsec">Differential entropy function ｜ 微分熵函數</h3>
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶9</span>Let X be a continuous random variable taking values from ℝ with a probability density function f(x). Analogously to (1), <mark class="p">the continuous entropy is defined as:</mark></p>
+    <div class="eq"><span><i>H</i><sub>a</sub>(<i>X</i>) = <sup>1</sup>⁄<sub>(1−a)</sub> · ln ∫ <i>f</i>(<i>x</i>)<sup>a</sup> d<i>x</i></span><span class="no">(5)</span></div>
+    <p class="en">Although the entropy depends on the base of the logarithm, its value changes only by a constant coefficient for different bases; <mark class="p">we use the natural logarithm for all differential entropy functions</mark>. The special cases are:</p>
+    <div class="eq"><span><i>H</i><sub>1</sub>(<i>X</i>) = −∫ <i>f</i>(<i>x</i>) ln <i>f</i>(<i>x</i>) d<i>x</i></span><span class="no">(6)</span></div>
+    <div class="eq"><span><i>H</i><sub>2</sub>(<i>X</i>) = −ln ∫ <i>f</i>(<i>x</i>)² d<i>x</i></span><span class="no">(7)</span></div>
+    <p class="en"><mark class="g">An important difference between discrete and continuous entropy is that while discrete entropy takes only non-negative values, continuous entropy can also take negative values</mark>: H<sub>a</sub>(X) ∈ ℝ (8). In practice, standard risk measures like the CAPM beta or standard deviation are calculated on daily or monthly return data. Since <mark class="y">the return on securities can take values from a continuous codomain, we primarily focus on the differential entropy function</mark>. <mark class="g">However, by grouping return values into bins the discrete entropy function may also be used; this solution is outside the scope of this paper.</mark></p>
+    <div class="zh-tr">設 X 為取值於實數、具密度函數 f(x) 的連續隨機變數。仿照式 (1)，連續（微分）熵定義如式 (5)。熵值雖依對數底而異，但不同底之間僅差一常數係數；本文的微分熵一律採自然對數。特例 a=1、a=2 分別如式 (6)、(7)。離散熵與連續熵的一項關鍵差異：離散熵恆非負，連續熵卻可能為負，如式 (8)。實務上，貝塔與標準差等標準風險度量皆以日或月報酬計算；由於證券報酬取值於連續值域，本文以微分熵為主。當然，將報酬分組入 bin 後亦可使用離散熵，但該做法不在本文範圍內。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ②：微分熵及其陷阱</div>
+    <p><b>為何可為負</b>：離散機率 pᵢ ≤ 1 故 −log pᵢ ≥ 0；密度 f(x) 卻可以 &gt; 1（分布極窄時），使 −ln f 為負。日報酬的標準差常在 1–3%，密度峰值遠大於 1，因此<b>金融日報酬的微分熵通常是負數</b>——這正是後文式 (22) 要取指數變換的原因。</p>
+    <p><b>尺度不變性喪失</b>：微分熵隨變數的線性縮放而平移（H(cX)=H(X)+ln|c|），意味著熵混入了波動幅度資訊——它與標準差的相關並非巧合，而是數學內建。</p>
+    <p><span class="tag warn">注意</span>最後的綠色讓步句對你極為關鍵：作者<b>明確排除了「分 bin 後用離散熵」的路線</b>，而那恰是你 proposal 採用的路線（等寬分箱＋離散 Shannon 熵）。你們是同一問題的兩個分支：他們估密度→連續熵，你分箱→離散熵。這既是引用時必須說清的差異，也是你「符號化 vs 等寬分箱」理論澄清的文獻定位點。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 熵的估計 ====================== -->
+<section class="paper-sec" id="method-est">
+<h2 class="sec-title">熵的估計模型 ｜ 直方圖 · 核密度 · 樣本間距</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶10</span>For the estimation of differential entropy, <mark class="y">the probability density function of the return values needs to be estimated</mark>. Let x<sub>1</sub>,…,x<sub>n</sub> be the observations of X, and H<sub>a,n</sub>(X) the sample-based estimation of H<sub>a</sub>(X). <mark class="p">The plug-in estimations of entropy are calculated on the basis of the density function estimation</mark>; the probability density function f(x) is estimated by f<sub>n</sub>(x), the integral estimate of entropy, in the following way:</p>
+    <div class="eq"><span><i>H</i><sub>a,n</sub>(<i>X</i>) = <sup>1</sup>⁄<sub>(1−a)</sub> · ln ∫<sub>A<sub>n</sub></sub> <i>f</i><sub>n</sub>(<i>x</i>)<sup>a</sup> d<i>x</i></span><span class="no">(9)</span></div>
+    <p class="en">where <mark class="r">A<sub>n</sub> is the range of integration</mark>, which may exclude small and tail values of f<sub>n</sub>(x). <mark class="p">We propose to select A<sub>n</sub> = (min(x), max(x)).</mark></p>
+    <div class="zh-tr">估計微分熵之前，必須先估計報酬的機率密度函數。設 x₁,…,xₙ 為觀測值，H₍a,n₎(X) 為樣本估計量。所謂「插入式估計」（plug-in estimation），即先以 fₙ(x) 估計密度 f(x)，再代入式 (9) 之積分。其中 Aₙ 為積分範圍，可排除密度過小的尾部；本文建議取 Aₙ = (min(x), max(x))，即樣本的實際取值範圍。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：搭建估計框架</span><span class="tag role">邏輯角色：三種模型的共同母體</span></div>
+    <p><span class="lbl">① 功能</span>　定義 plug-in 原則：<b>熵的估計問題被化約為密度的估計問題</b>。接下來三個模型（直方圖／核密度／樣本間距）只是替換 fₙ(x) 的三種方式。</p>
+    <p><span class="lbl">② 邏輯角色</span>　這一步決定了全文的方法架構：任何密度估計的偏誤都會直接傳染給熵估計。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　積分範圍取 (min, max) 意味著<b>熵估計對極端值敏感</b>——一筆崩盤日報酬會拉寬 Aₙ。這與你研究 2025/4/7 台股歷史性大跌的情境直接相關：危機樣本會機械性地改變估計範圍。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶11 · Histogram</span>One of the simplest methods of density estimation is <mark class="r">the histogram-based density estimation</mark>. Let b<sub>n</sub> be the range of sample values; <mark class="p">partition the range into k bins of equal width</mark>, with constant width h = b<sub>n</sub>/k. The density function is estimated as f<sub>n</sub>(x) = n<sub>j</sub>/(nh) if x falls in bin j, where n<sub>j</sub> is the number of data points in the jth bin (10). Based on the properties of the histogram, <mark class="y">a simpler non plug-in estimation formula can be deduced for Shannon and Rényi entropy</mark>:</p>
+    <div class="eq"><span><i>H</i><sub>1,n</sub>(<i>X</i>) = −<sup>1</sup>⁄<sub>n</sub> Σ<sub>j=1..k</sub> <i>n</i><sub>j</sub> ln( <i>n</i><sub>j</sub>/(<i>nh</i>) )</span><span class="no">(11)</span></div>
+    <div class="eq"><span><i>H</i><sub>2,n</sub>(<i>X</i>) = −ln Σ<sub>j=1..k</sub> <i>h</i>·( <i>n</i><sub>j</sub>/(<i>nh</i>) )²</span><span class="no">(12)</span></div>
+    <p class="en"><mark class="g">The parameter of this method is the number of equal width bins (k). However, there are several methods for choosing this parameter (e.g. the square root choice, Scott's normal reference rule, or the Freedman-Diaconis rule); the detailed descriptions of these are outside the scope of this paper.</mark></p>
+    <div class="zh-tr">【直方圖法】最簡單的密度估計即直方圖：將樣本範圍等寬切為 k 個 bin，每個 bin 寬度 h = bₙ/k，落在第 j 個 bin 內的密度估計為 nⱼ/(nh)，其中 nⱼ 為該 bin 的觀測筆數，如式 (10)。利用直方圖的性質，Shannon 與 Rényi 熵可推導出免積分的封閉解，分別如式 (11)、(12)——這正是摘要承諾的「簡便估計方法」。此法唯一的參數是 bin 數 k；選 k 的方法很多（平方根法、Scott 常態參考法則、Freedman–Diaconis 法則），惟其細節不在本文範圍內。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ③：直方圖熵估計（本文主力模型）</div>
+    <p><b>直覺</b>：式 (11) 就是「離散 Shannon 熵＋寬度校正」。令 p̂ⱼ = nⱼ/n，可改寫為 H₁,ₙ = −Σ p̂ⱼ ln p̂ⱼ <b>+ ln h</b>。前項是分箱後的離散熵，後項 ln h 把它校正回連續尺度。</p>
+    <p><b>這揭示了你已記錄的核心問題</b>：+ln h 一項使估計值直接依賴 bin 寬，而等寬分箱下 h = (max−min)/k 由樣本極差決定——<b>波動大 → 極差大 → h 大 → 熵機械性升高</b>。本文的熵與標準差高度同步（Fig.1），很大程度是這個機制的產物，而非熵捕捉了獨立資訊。這是你「等寬分箱與波動度機械相關」批評的公式級證據，proposal 方法一節可直接引式 (11) 說明。</p>
+    <p><b>參數選擇的迴避</b>：綠色句把 k 的選擇推給文獻，但後文實際用 k=175（Shannon）與 k=50（Rényi），<b>未說明如何選出</b>——見 ¶15 批注，這是全文最大的方法論弱點。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶12 · Kernel</span><mark class="r">The kernel-based density estimation</mark> is another commonly used method. It applies the formula f<sub>n</sub>(x) = (1/nh)·Σ K((x−x<sub>i</sub>)/h) (13), where K(·) is <mark class="r">the kernel function</mark> and h is <mark class="r">the bandwidth parameter</mark>. <mark class="p">For practical reasons (computational time), we propose using the indicator-based Epanechnikov kernel function:</mark></p>
+    <div class="eq"><span><i>K</i>(<i>z</i>) = ¾·(1−<i>z</i>²)·<i>I</i><sub>{|z|≤1}</sub></span><span class="no">(14)</span></div>
+    <p class="en"><mark class="g">Härdle shows that the choice of the kernel function is only of secondary importance, so the focus is rather on the right choice of bandwidth (h).</mark> One of the most widely used simple formulas for the estimation of h is <mark class="r">Silverman's rule of thumb</mark>:</p>
+    <div class="eq"><span><i>ĥ</i><sub>rot</sub> = 1.06 · min{ <i>s</i>, IQR(<i>x</i>)/1.34 } · <i>n</i><sup>−1/5</sup></span><span class="no">(15)</span></div>
+    <p class="en"><mark class="g">As the formula assumes a normal distribution for X it gives an approximation for optimal bandwidth; despite this, Silverman's rule of thumb can be used for a good initial value for more sophisticated optimization methods.</mark></p>
+    <div class="zh-tr">【核密度法】核密度估計是另一常用方法：在每個觀測點放置一個以頻寬 h 縮放的核函數 K，再取平均，如式 (13)。基於計算效率考量，本文建議採用指示函數形式的 Epanechnikov 核，如式 (14)。Härdle 已證明核函數的選擇僅屬次要，真正關鍵在頻寬 h；最常用的簡便公式是 Silverman 經驗法則，如式 (15)，其中 IQR 為四分位距。此公式假設 X 服從常態分布，故僅為最適頻寬的近似——儘管如此，它仍可作為更精細最佳化方法的良好初始值。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ④：核密度熵估計</div>
+    <p><b>直覺</b>：直方圖把質量「硬塞」進格子，核密度則在每筆觀測上放一個平滑的小山丘（此處為拋物線形的 Epanechnikov 核），疊加後得到連續曲線——消除了直方圖對切點位置的敏感。</p>
+    <p><b>反諷之處</b>：式 (15) 的 Silverman 法則<b>假設常態分布</b>，而全文的出發點正是「報酬不服從常態」。作者用綠色讓步句自我豁免（「僅作初始值」），但實際上並未接續更精細的最佳化——批評工具的假設，卻在工具內部沿用同一假設，這是隱性的邏輯不一致。</p>
+    <p><b>取 min{s, IQR/1.34} 的原因</b>：對厚尾分布，IQR 比標準差穩健；取兩者較小值可避免離群值把頻寬撐得過寬、過度平滑。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶13 · Sample spacing</span>Let x<sub>n,1</sub> ≤ x<sub>n,2</sub> ≤ … ≤ x<sub>n,n</sub> be the ordered sample, assuming i.i.d. real-valued random variables. x<sub>n,i+m</sub> − x<sub>n,i</sub> is called <mark class="r">a spacing of order m</mark>. The simple sample spacing density estimate is f<sub>n</sub>(x) = (m/n)·1/(x<sub>n,im</sub> − x<sub>n,(i−1)m</sub>) (16). Wachowiak et al. introduced another variation, called <mark class="r">the Correa estimator</mark> (17), a locally regression-weighted refinement. The parameter for sample spacing methods is the fixed order m; <mark class="p">for practical reasons we suggest using m<sub>n</sub> = ⌈n/k⌉, which depends on the size of the sample</mark> (18), where k is the number of bins. <mark class="g">Beirlant et al. overview several additional entropy estimation methods, such as resubstitution, splitting-data and cross-validation; however, our paper focuses on the applications that are used most often.</mark></p>
+    <div class="zh-tr">【樣本間距法】將樣本排序後，相隔 m 位的兩個順序統計量之差稱為 m 階間距。最簡單的間距密度估計如式 (16)：資料愈密集處間距愈小、密度愈高。Wachowiak 等人提出的 Correa 估計量（式 17）是其局部迴歸加權的改良版。間距法的參數是階數 m；基於實務考量（樣本大小不一），本文建議取 mₙ = ⌈n/k⌉，使其隨樣本量調整，其中 k 為 bin 數，如式 (18)。Beirlant 等人回顧了再代入、分割資料、交叉驗證等更多熵估計方法，惟本文僅聚焦最常用者。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ⑤：樣本間距熵估計</div>
+    <p><b>直覺</b>：完全不畫格子、不放核，直接用「排序後相鄰觀測值的距離」反推密度——點擠在一起（間距小）表示密度高。它是三者中唯一<b>不需人為劃定空間切割</b>的方法，理論上最優雅。</p>
+    <p><b>為何仍被淘汰</b>：S3 附表顯示直方圖法在解釋力、預測力與簡便性上勝出，故正文全部採直方圖。注意作者以「實證表現」而非「理論性質」裁決模型選擇——這是<b>務實主義的模型選擇邏輯</b>，與其「易用性」承諾一致，但也代表結論綁定於特定實作。</p>
+    <p><span class="tag tip">三模型小結</span>直方圖＝速度與封閉解｜核密度＝平滑性｜樣本間距＝免切割。本文的取捨判準：解釋力優先。你的 proposal 可用同一判準為「等寬 vs 全樣本分位數分箱」的比較辯護。</p>
+  </aside>
+</div>
+</section>
+<!-- ====================== 風險度量模型 ====================== -->
+<section class="paper-sec" id="method-risk">
+<h2 class="sec-title">風險度量模型 ｜ 標準差 · CAPM 貝塔 · 熵基風險</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶14</span>Let the following be a given set of data: <mark class="p">D : {S, R, R<sub>M</sub>, R<sub>F</sub>}</mark> (19) — the set of securities S, the corresponding return observations R, the market return R<sub>M</sub>, and the risk-free return R<sub>F</sub>. In order to handle the risk measure uniformly, <mark class="p">we introduce κ as a unified property for securities</mark>; let κ(S<sub>i</sub>) be the risk estimate for the security i. In the economic literature the most widely used risk measures are <mark class="r">the standard deviation and the CAPM beta</mark>:</p>
+    <div class="eq"><span><i>κ̂</i><sub>s</sub>(<i>S</i><sub>i</sub>) = σ(<i>R</i><sub>i</sub> − <i>R</i><sub>F</sub>)</span><span class="no">(20)</span></div>
+    <div class="eq"><span><i>κ̂</i><sub>β</sub>(<i>S</i><sub>i</sub>) = β<sub>i</sub> = cov(<i>R</i><sub>i</sub>−<i>R</i><sub>F</sub>, <i>R</i><sub>M</sub>−<i>R</i><sub>F</sub>) / σ²(<i>R</i><sub>M</sub>−<i>R</i><sub>F</sub>)</span><span class="no">(21)</span></div>
+    <p class="en"><mark class="y">Our hypothesis is that uncertainty about the observation values can be interpreted as a risk of the security, and for this reason we apply entropy as a risk measure.</mark> <mark class="g">Because the differential entropy function can also take negative values, for better interpretability we apply the exponential function to the entropy</mark>, and we define <mark class="r">the entropy-based risk measure</mark> by the following formula:</p>
+    <div class="eq"><span><i>κ̂</i><sub>H</sub>(<i>S</i><sub>i</sub>) = e<sup><i>H</i><sub>n</sub>(<i>R</i><sub>i</sub> − <i>R</i><sub>F</sub>)</sup></span><span class="no">(22)</span></div>
+    <p class="en">One can see that κ<sub>H</sub> takes values from the non-negative real numbers, κ<sub>H</sub> ∈ [0, +∞).</p>
+    <div class="zh-tr">給定資料集 D：證券集合 S、對應報酬觀測 R、市場報酬 R_M 與無風險報酬 R_F。為統一處理各種風險度量，本文引入 κ 作為證券的統一風險屬性：κ(Sᵢ) 即證券 i 的風險估計值。文獻中最常用的兩種度量為標準差與 CAPM 貝塔，估計式分別如 (20)、(21)——注意兩者皆以「風險溢酬」（超額報酬）計算。本文的假設是：觀測值的不確定性可詮釋為證券的風險，因此以熵作為風險度量。由於微分熵可能為負值，為利於解讀，本文對熵取指數變換，定義熵基風險度量如式 (22)。如此 κ_H 恆為非負實數。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ⑥：三種風險度量的統一競技場</div>
+    <p><b>κ 框架的作用</b>：把 σ、β、e^H 放進同一個函數介面，使「風險度量」成為可替換的模組——後文的 R² 比較因此在形式上公平。</p>
+    <p><b>指數變換 e^H 的三重意義</b>：(1) 解決負值問題；(2) e^H 在資訊理論中即「有效狀態數」（perplexity 的連續版），單位上可解讀為「報酬分布等價於多少種等可能結果」；(3) 常態分布下 e^H = σ·√(2πe)，即<b>常態時 κ_H 恰為標準差的常數倍</b>——這給了 ¶2 讓步句（常態下兩者無異）精確的數學形式，也使 κ_H 與 σ 的任何差異都可歸因於非常態性。這是全文論證的樞紐等式，正文卻未明寫，值得你在文獻回顧中替它補上。</p>
+    <p><span class="tag warn">潛在漏洞</span>「不確定性＝風險」以 hypothesis 之名一句帶過（黃色句），未與下方風險、半變異數等替代定義對話。你的 H1 重構恰好踩在同一個縫上：熵度量「亂度」，不度量「方向」。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 解釋力與預測力 ====================== -->
+<section class="paper-sec" id="method-eval">
+<h2 class="sec-title">評估架構 ｜ 樣本內解釋力與樣本外預測力</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶15 · In-sample</span>In order to compare the efficiency of the risk estimation methods, we introduce two basic evaluation approaches, <mark class="r">the measurement of in-sample explanatory power and the measurement of out-of-sample predictive power</mark>. The linear relationship between a target variable V and an explanatory variable U is described using the linear regression model <mark class="p">V = α₀ + α₁U + ε, estimated by ordinary least squares (OLS)</mark>. One of the most commonly applied estimations of the explanatory power is <mark class="r">the R² (goodness of fit)</mark> of the linear regression (23). Let the explanatory variable be <mark class="p">the risk measure of the securities</mark> (24), and the target variable be <mark class="p">the expected risk premium of the securities</mark>: v<sup>m</sup> = (E[R₁−R_F], …, E[R_l−R_F]) (25). We define the estimation of the in-sample explanatory power as <mark class="p">ĝ(κ) = R²(v<sup>m</sup>, u<sup>κ</sup>)</mark> (26).</p>
+    <div class="zh-tr">【樣本內】為比較各風險估計方法的效率，本文引入兩種評估路徑：樣本內解釋力與樣本外預測力。以線性迴歸 V = α₀ + α₁U + ε 描述兩變數的線性關係，OLS 估計參數，並以迴歸的 R²（判定係數）衡量解釋力，如式 (23)。令解釋變數為各證券的風險估計值（式 24）、目標變數為各證券的期望風險溢酬（式 25），則樣本內解釋力定義為兩者迴歸的 R²，即式 (26)。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：定義裁判規則</span><span class="tag role">邏輯角色：把「更好」操作化為 R²</span></div>
+    <p><span class="lbl">① 功能</span>　這是<b>橫斷面定價迴歸</b>：每檔證券貢獻一個點（風險值, 平均溢酬），150 檔證券跑一條迴歸——不是時間序列迴歸。理解這點才能正確讀後面所有 R²。</p>
+    <p><span class="lbl">② 邏輯角色</span>　選 R² 當唯一裁判，使 thesis 成為單一數字之爭，乾淨但也窄化。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　<b>(a)</b> 單變量橫斷面迴歸忽略 Fama–MacBeth 式的標準流程，沒有控制規模、價值等已知因子——熵的解釋力可能只是代理了這些因子。<b>(b)</b> 更關鍵：<b>k=175/50 的 bin 數是如何選的？</b>若是在同一樣本上挑出 R² 最高的 k，樣本內比較就含資料窺探（data snooping）。這與你已記錄的「前視偏誤」問題同構，是你批判性回顧此文時的第一攻擊點。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶16 · Out of sample</span>Let us create <mark class="p">a split of samples</mark> for a given D:{S, R, R<sub>M</sub>, R<sub>F</sub>} data set: D<sup>I</sup> (in-sample) and D<sup>O</sup> (out-of-sample) (27), where the first m observations form the estimation window and the following p observations form the evaluation window (m+p = n). <mark class="p">The explanatory values contain the risk estimates based on the data set D<sup>I</sup></mark> (28), and <mark class="p">the target values are the expected risk premium of the securities based on D<sup>O</sup></mark> (29). The estimation of the out-of-sample explanatory (predictive) power is ĝ<sup>O</sup>(κ) = R²(v<sup>mO</sup>, u<sup>Iκ</sup>) (30). <mark class="p">Both in- and out of sample we test whether the difference between the explanatory power of the investigated risk measures are significant by applying bootstrapping method. In our bootstrap iteration we remove 25 random stocks from the investigated 150 ones and measure the R²s of the four different models. We apply 1000 iterations to approximate the distribution of R² values on random selection, and we test the equality of means of R²s by applying t-test on the generated samples.</mark></p>
+    <div class="zh-tr">【樣本外】將資料集依時間切分為估計窗 Dᴵ（前 m 筆）與評估窗 Dᴼ（後 p 筆）。以估計窗計算各證券的風險值（式 28），以評估窗計算其實現的平均風險溢酬（式 29），兩者迴歸之 R² 即樣本外預測力，如式 (30)。無論樣本內外，各風險度量 R² 差異的顯著性皆以拔靴法（bootstrap）檢定：每次迭代自 150 檔中隨機剔除 25 檔、重算四個模型的 R²，重複 1000 次以逼近 R² 在隨機選股下的分布，再以 t 檢定比較各模型 R² 均值是否相等。</div>
+  </div>
+  <aside class="note model">
+    <div class="mhead">模型詳解 ⑦：時間切分與拔靴法檢定</div>
+    <p><b>樣本外設計的本質</b>：用「過去的風險」預測「未來的平均溢酬」——這是對 thesis 最嚴格的檢驗，因為它排除了同期擬合的循環性。時間切分（而非隨機切分）尊重了金融資料的序列結構。</p>
+    <p><b>拔靴法的巧思與侷限</b>：重抽的是<b>股票</b>而非<b>時間</b>，回答「換一批股票結論是否仍成立」，卻無法回答「換一段時期是否成立」——時期穩健性由 18 個滾動十年期承擔（見 ¶22）。兩層設計互補，值得你在方法一節仿效。</p>
+    <p><span class="tag tip">與你論文的連結</span>你的滾動熵推論問題（持續性導致標準誤失真）在此同樣潛伏：橫斷面迴歸的殘差在股票間可能相關（產業聚集），t 檢定未做聚類調整。可作為你方法討論的延伸批評。</p>
+  </aside>
+</div>
+</section>
+<!-- ====================== 結果：分散化 ====================== -->
+<section class="paper-sec" id="res-div">
+<h2 class="sec-title">Results ｜ 結果一 · 刻畫分散化效果</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶17</span>We investigate whether <mark class="y">entropy is able to measure the reduction of risk by diversification</mark>. We generate <mark class="p">10 million random equally-weighted portfolios with different numbers of securities involved (at most 100,000 for each size)</mark>, based on the 150 randomly selected securities from the S&amp;P500. The risk of portfolios is estimated by standard deviation, and by the Shannon and Rényi entropies using risk premiums for the full period. <mark class="g">Because the CAPM beta measures the systematic risk only, we exclude it from the investigation of risk reduction.</mark> <mark class="p">Both types of entropy functions are calculated by the histogram-based density function estimation, with 175 bins for the Shannon entropy and 50 bins for the Rényi entropy. (We tested the histogram, sample spacing and kernel density estimation methods, and the histogram-based method proved to be the most efficient in terms of explanatory and predictive power and simplicity.)</mark> <mark class="b">For 10 random securities involved in the portfolio, approximately 40% of risk reduction can be achieved compared to a single random security, based on all of the three risk estimators under investigation.</mark></p>
+    <div class="zh-tr">首先檢驗熵能否度量分散化帶來的風險降低。以 150 檔隨機證券為基礎，生成一千萬個不同持股數的隨機等權重投資組合（每種規模至多十萬個），分別以標準差、Shannon 熵與 Rényi 熵（皆用全期風險溢酬）估計組合風險。由於 CAPM 貝塔僅度量系統性風險，故不納入風險降低的檢驗。兩種熵皆採直方圖密度估計：Shannon 熵取 175 個 bin，Rényi 熵取 50 個 bin（作者比較過直方圖、樣本間距與核密度三法，直方圖在解釋力、預測力與簡便性上最優）。結果顯示：持股 10 檔的組合相對單一證券可降低約 40% 的風險，且三種風險估計量給出的答案一致。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：提供證據（性質檢驗）</span><span class="tag role">邏輯角色：驗證「熵像 σ」的一半主張</span></div>
+    <p><span class="lbl">① 功能</span>　回應 ¶3 命題 (b)：熵是否具備風險度量的第一資格——隨分散化遞減。「40%」與組合理論的經典結果吻合，是熵的<b>效度檢驗</b>（收斂效度）。</p>
+    <p><span class="lbl">② 邏輯角色</span>　排除貝塔的理由（綠色句）本身是概念釐清：β 對分散化「免疫」，納入反而是類別錯誤——展示了作者對度量性質的精準把握。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　關鍵參數（175/50 bins）在<b>結果一節</b>才首次出現，且僅以括號帶過選擇依據（附表 S3）。一千萬個組合的算力展示很有說服力，但參數透明度不足。<b>你的 proposal 應反其道而行：在方法一節就固定並辯護 bin 數選擇規則</b>（如 Freedman–Diaconis），避免同樣質疑。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶18</span>Fig. 1 suggests that <mark class="b">entropy shows behavior that is similar to but not the same as standard deviation</mark>, so it can serve as a good measure of risk. We also investigate how the different portfolios behave in the expected return – risk coordinate system. We generate 200-200 random equally-weighted portfolios with 2, 5 and 10 securities involved, and compare these to single securities. <mark class="b">One can see that the characteristics of standard deviation and entropy are quite similar, with the portfolios being situated on a hyperbola as in the portfolio theory of Markowitz.</mark> <mark class="b">Different characteristics can be observed by using the CAPM beta; the more securities that are involved in a portfolio, the closer they are situated in the center of the coordinate system.</mark></p>
+    <div class="zh-tr">圖 1 顯示，熵的行為與標準差「相似而不相同」，故可作為良好的風險度量。接著在「期望報酬－風險」座標系中觀察不同組合的分布：生成持股 2、5、10 檔的隨機等權組合各 200 個，與單一證券比較。可以看到，以標準差或熵為橫軸時，組合皆落在 Markowitz 組合理論所預測的雙曲線上，兩者特徵高度相似；改以 CAPM 貝塔為橫軸則呈現不同圖像——持股數愈多，組合愈向座標系中心收攏。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：視覺化證據</span><span class="tag role">邏輯角色：接通 Markowitz 正統</span></div>
+    <p><span class="lbl">① 功能</span>　「熵座標系中重現效率前緣雙曲線」是本文最優雅的結果：新度量無縫嵌入既有理論幾何，大幅降低學界接受成本。</p>
+    <p><span class="lbl">② 邏輯角色</span>　「similar but not the same」一語承上啟下：像 σ（通過資格審查）、又不同於 σ（保留超越 σ 的空間）——為下一節熵勝出 σ 的結果預留邏輯出口。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「相似而不相同」的<b>差異部分從未被量化</b>（如熵與 σ 的橫斷面相關係數），讀者無法判斷熵的增量資訊有多少。你若複製此設計於 TWSE，補上這個相關係數矩陣即是立即可做的增量貢獻。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 結果：長期解釋力 ====================== -->
+<section class="paper-sec" id="res-long">
+<h2 class="sec-title">結果二 · 長期解釋力</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶19</span>In order to evaluate how efficiently the risk measures explain the expected risk premium over a long period, we estimate the risk for each security based on the full period (denoted by P1). <mark class="b">The CAPM beta performs the worst, with 6.17% efficiency. However, the explanatory power of standard deviation (7.83%) is higher than that of the CAPM beta, and both entropies perform significantly better, with efficiency of 12.98% for the Shannon entropy and 15.71% for the Rényi entropy.</mark> Based on the equation of linear regressions, <mark class="b">the average unexplained risk premium (intersect on the Y-axis or Jensen alpha) for the entropy methods (0.0091, 0.0059) is lower than that for the standard methods (0.0170 for standard deviation and 0.0209 for the CAPM beta)</mark>.</p>
+    <div class="zh-tr">為評估各風險度量在長期間解釋期望風險溢酬的效率，以全期（P1，1985–2011）估計每檔證券的風險。結果：CAPM 貝塔表現最差，R² 僅 6.17%；標準差略高（7.83%）；兩種熵則顯著更佳——Shannon 熵 12.98%，Rényi 熵 15.71%。此外，由迴歸式的截距（即 Jensen alpha，未被風險解釋的平均溢酬）觀之，熵方法的截距（0.0091、0.0059）低於標準方法（標準差 0.0170、貝塔 0.0209）——意即熵留下的「無法定價的報酬」更少。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：核心證據（主戰場）</span><span class="tag role">邏輯角色：thesis 的直接驗證</span></div>
+    <p><span class="lbl">① 功能</span>　這是摘要黃色主張的兌現時刻：15.71% vs 6.17%，Rényi 熵的解釋力約為貝塔的 2.5 倍。雙指標印證（R² ↑ 且 Jensen α ↓）比單看 R² 更有力——截距逼近零表示定價模型「吃乾淨」了溢酬。</p>
+    <p><span class="lbl">② 邏輯角色</span>　注意論證順序：先讓 σ 打敗 β（7.83 &gt; 6.17），暗示「總風險本來就比系統風險會定價」，再讓熵打敗 σ——把熵的勝利拆解為兩層，每層都有獨立含義。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　全部 R² 絕對值都不高（&lt;16%），作者選擇不評論這一點。橫斷面定價文獻中這屬正常水位，但「熵解釋了 84% 以外的什麼都沒解釋」同樣是事實——比較級修辭掩蓋了絕對值的謙卑。你引用時建議同時報告兩面。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶20</span>Fig. 4 illustrates how the explanatory power changes with diversification. <mark class="b">One can see that the explanatory power of standard deviation and entropy decreases with an increase in the number of securities involved in the portfolio, while the performance of the CAPM beta is nearly constant.</mark> <mark class="g">While the CAPM beta models the systematic risk only, the standard deviation and entropy are capable of measuring specific risk, which gives additional explanatory power for less-diversified portfolios.</mark> <mark class="b">Despite the decreased explanatory power of both entropy functions, they perform better than the CAPM beta in all the cases that were investigated. For well-diversified portfolios the explanatory power of the Rényi entropy is 1.5 times higher than that of the CAPM beta.</mark></p>
+    <div class="zh-tr">圖 4 呈現解釋力如何隨分散化改變：標準差與熵的解釋力隨持股數增加而下降，貝塔則近乎不變。原因在於貝塔僅建模系統性風險，而標準差與熵能捕捉個別風險——後者正是低分散組合額外解釋力的來源。儘管兩種熵的解釋力隨分散化下降，它們在所有受檢情境中仍優於貝塔；即使對充分分散的組合（此時個別風險理應消失、貝塔的主場），Rényi 熵的解釋力仍是貝塔的 1.5 倍。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：預防最強反駁</span><span class="tag role">邏輯角色：讓步後的關鍵一擊</span></div>
+    <p><span class="lbl">① 功能</span>　這段處理的是理論上最致命的異議：「熵贏只因它含個別風險，充分分散後優勢應消失」。作者<b>先承認機制</b>（綠色句），再用充分分散情境下的 1.5 倍<b>正面擊破</b>——在對手主場獲勝，證據價值最高。</p>
+    <p><span class="lbl">② 邏輯角色</span>　¶3 的「1.5 倍」在此兌現全部條件。這是全文 concession–rebuttal 的教科書範例。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「充分分散後熵仍勝」暗示熵捕捉到<b>系統風險之外的定價資訊</b>（可能是高階矩：偏態、峰態），但作者未追問是什麼——留下的正是後續文獻（含你的論文）可以進入的空間：熵溢酬的來源分解。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 結果：牛熊市場 ====================== -->
+<section class="paper-sec" id="res-trend">
+<h2 class="sec-title">結果三 · 牛熊市場分樣檢驗</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶21</span>We split the original 27-year sample by primary market trend into a <mark class="r">"bullish" and a "bearish" sample</mark> (denoted by P1+ and P1−). <mark class="b">In bullish market circumstances we find a very high explanatory power for all kinds of risk measures: 33.90%, 36.67%, 43.45% and 42.36% with standard deviation, the CAPM beta, the Shannon entropy and the Rényi entropy, respectively.</mark> As for the full sample tests, the slopes of the regression lines are positive, meaning that higher risk-taking promises higher returns. <mark class="b">In contrast to the bullish market, during downward trends higher risk-taking does not result in higher returns and, indeed, the higher the risk the higher the negative premium achieved by the investor.</mark> <mark class="g">We have to mention that the explanatory power of the CAPM beta is higher than that of the entropy-based risk measures</mark> [in the bearish sample]. Our entropy results are in line with those for the CAPM beta; and the regime dependency is clear as well. <mark class="g">Altogether, we argue that the test results for the full sample give a better comparison opportunity, as the sample sizes of the bullish and bearish markets are different and at the present moment the investor cannot decide whether there is an upward or a downward trend.</mark></p>
+    <div class="zh-tr">將 27 年樣本依主要市場趨勢切為「牛市」（P1+）與「熊市」（P1−）兩個子樣本。牛市中所有風險度量的解釋力都極高：標準差 33.90%、貝塔 36.67%、Shannon 熵 43.45%、Rényi 熵 42.36%，且迴歸斜率為正——風險承擔愈高，報酬愈高。熊市則相反：風險愈高，投資人承受的負溢酬愈大。必須承認，熊市中貝塔的解釋力（43.7%）高於熵基度量；熵的結果與貝塔方向一致，情境依賴性同樣明顯。總體而言，作者主張全樣本檢驗才是更合理的比較基準：牛熊樣本大小不同，且投資人在當下無從判斷身處上升或下降趨勢。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：承認不利證據＋限縮其效力</span><span class="tag role">邏輯角色：防禦性收尾</span></div>
+    <p><span class="lbl">① 功能</span>　誠實報告熵唯一落敗的戰場（熊市），隨即以兩個理由降低該戰場的裁決權重：樣本不對稱、趨勢不可事前觀察（後者實質是說熊市分樣含<b>前視偏誤</b>——你proposal已標記的同名問題！）。</p>
+    <p><span class="lbl">② 邏輯角色</span>　用「所有度量都情境依賴」把熵的缺陷<b>常態化</b>，呼應 ¶4 的預先讓步，首尾閉環。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　「趨勢不可事前判斷」的論點是雙面刃：若成立，則牛市中熵的漂亮數字（43.45%）<b>同樣不可事前利用</b>。作者只用它豁免敗績、未用它折扣勝績，屬選擇性適用。此外，斜率隨牛熊翻轉正是<b>熵（及所有無方向度量）方向盲的實證鐵證</b>——這一段是你重構 H1（引入熵×落後報酬交互項以承載方向）最直接的文獻支點，建議proposal精讀引用。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 結果：樣本外預測 ====================== -->
+<section class="paper-sec" id="res-pred">
+<h2 class="sec-title">結果四 · 短期解釋力與樣本外預測力</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶22</span><mark class="g">Although attractive results are achieved within the sample, this does not necessarily mean high efficiency outside the sample.</mark> Therefore we took <mark class="p">several ten-year periods, shifting the starting year by one year for each</mark>, with the first period being 1985 to 1994 and the last 2002 to 2011 — 18 ten-year periods in total. <mark class="p">We split each ten-year period into two shorter five-year periods (P2i and P2o), with the risk measures being estimated based on the first period and the predictive efficiency being measured in the second period.</mark></p>
+    <div class="zh-tr">樣本內的亮眼結果未必代表樣本外的高效率。因此作者取多個十年期視窗、每次起始年後移一年——自 1985–1994 至 2002–2011 共 18 個十年期；每個十年期再對切為兩個五年期（P2i 與 P2o）：以前五年估計風險度量，以後五年衡量其預測效率。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：升高檢驗標準</span><span class="tag role">邏輯角色：自我施壓的滾動視窗設計</span></div>
+    <p><span class="lbl">① 功能</span>　開頭綠色句是作者<b>替讀者說出質疑</b>（樣本內 ≠ 樣本外），然後以 18 個滾動視窗的重複實驗回應——比單次切分更能檢驗時期穩健性。</p>
+    <p><span class="lbl">② 邏輯角色</span>　「5 年估計＋5 年驗證＋逐年滾動」是你論文樣本外設計可直接移植的模板（TWSE 資料期可相應縮短視窗）。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　相鄰視窗重疊 9 年，18 個結果<b>高度相依</b>，其平均值的標準誤被低估——與你已記錄的「滾動熵持續性導致推論失真」是同一統計問題，可在方法批評中並列引用。</p>
+  </aside>
+</div>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶23</span>Table 1 summarizes the explanatory power of the investigated risk measures for the different samples. <mark class="b">While the standard deviation risk measure performs almost the same in the long and the short run (7.83% vs. 7.94%), its predictive efficiency is surprisingly good (9.70%). The explanatory power of the CAPM beta in the long period is low (6.17%), while the average efficiency in the short periods is more than twice as high (13.31%). Comparing the results for in-sample and the out-of-sample, the predictive power of the beta is relatively low (6.45%), which suggests that the model may be over-fitted for the training sample.</mark> <mark class="b">The Shannon entropy performs better than the standard deviation and the CAPM beta in each sample. The Rényi entropy shows the highest explanatory power in the long run; however, in short periods the Rényi entropy performs worse than the Shannon entropy.</mark> <mark class="b">Comparing the reliability of the risk estimators, the standard deviation of the in-sample and out-of-sample results is the lowest for the entropy risk measures, and the highest for the CAPM beta.</mark> <mark class="y">Summarizing our results, we state that the beta can beat the entropy only in the case of bearish market circumstances. In any other situation, entropy seems to be a better and more reliable risk measure.</mark></p>
+    <div class="zh-tr">表 1 彙總各風險度量在不同樣本下的表現。標準差長短期解釋力幾乎持平（7.83% 對 7.94%），且樣本外預測力意外地好（9.70%）。貝塔長期解釋力低（6.17%）、短期樣本內卻高逾一倍（13.31%），但樣本外預測力僅 6.45%——樣本內外的巨大落差顯示貝塔可能過度擬合訓練樣本。Shannon 熵在每一種樣本下都優於標準差與貝塔（樣本內 13.38%、樣本外 10.15%）；Rényi 熵長期解釋力最高，短期則遜於 Shannon 熵。就估計量的可靠性而言，熵基度量的 R² 相對標準差最低（約 0.62–0.69），貝塔最高（約 1.0）——即貝塔的表現最不穩定。總結：貝塔只有在熊市情境下能勝過熵；其他所有情境中，熵都是更好、更可靠的風險度量。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：總決算＋限定條件的結論</span><span class="tag role">邏輯角色：三維勝負表</span></div>
+    <p><span class="lbl">① 功能</span>　把比較升級為三個維度：解釋力（樣本內）、預測力（樣本外）、<b>可靠性</b>（R² 的相對離散度）。貝塔「短期樣本內 13.31% → 樣本外 6.45%」的崩落被診斷為過擬合，是對 CAPM 最重的一擊。</p>
+    <p><span class="lbl">② 邏輯角色</span>　黃色句是全文結論的<b>誠實版 thesis</b>：不是「熵永遠更好」，而是「除熊市外，熵更好且更可靠」——比摘要的表述多了限定條件，論證品質更高。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　Shannon 熵樣本外 10.15% 只比標準差的 9.70% 高不到半個百分點；「熵勝過 σ」在<b>預測力維度上其實是險勝</b>，遠不如樣本內懸殊。「更可靠」（低變異）反而是熵最紮實的優勢——你引用本文時，建議把賣點放在可靠性而非預測力。</p>
+  </aside>
+</div>
+</section>
+
+<!-- ====================== 結論 ====================== -->
+<section class="paper-sec" id="conclusion">
+<h2 class="sec-title">Conclusions ｜ 結論</h2>
+
+<div class="row">
+  <div class="src">
+    <p class="en"><span class="pno">¶24</span><mark class="y">Entropy as a novel risk measure combines the advantages of the CAPM's risk parameter (beta) and the standard deviation. It captures risk without using any information about the market, and it is capable of measuring the risk reduction effect of diversification.</mark> <mark class="b">The explanatory power for the expected return within the sample is better than the beta, especially in the long run covering bullish and bearish periods; the predictive power for the expected return is higher than for standard deviation. Both the Shannon and the Rényi entropies give more reliable risk estimation; their explanatory power exhibits significantly lower variance compared to the beta or the standard deviation.</mark> <mark class="g">If upward and downward trends are distinguished, the regime dependency of entropy can be recognized: this result is similar to that for the beta.</mark> <mark class="p">Among the entropy estimation methods reviewed, the histogram-based method proved to be the most efficient in terms of explanatory and predictive power; we propose a simple estimation formula for the Shannon and the Rényi entropy functions, which facilitates the application of an entropy-based risk measure.</mark></p>
+    <div class="zh-tr">作為新型風險度量，熵兼具 CAPM 貝塔與標準差兩者之長：它不需任何市場資訊即可捕捉風險，又能度量分散化的風險降低效果。樣本內對期望報酬的解釋力優於貝塔（尤以涵蓋牛熊的長期樣本為然）；樣本外預測力則高於標準差。Shannon 與 Rényi 熵皆提供更可靠的風險估計——其解釋力的變異顯著低於貝塔與標準差。若區分漲跌趨勢，熵的情境依賴性便會顯現，此性質與貝塔相仿。在所檢視的各種熵估計方法中，直方圖法在解釋力與預測力上最有效率；本文並提出 Shannon 與 Rényi 熵的簡便估計公式，使熵基風險度量的實務應用成為可能。</div>
+  </div>
+  <aside class="note">
+    <div class="fn"><span class="tag func">段落功能：總結收束</span><span class="tag role">邏輯角色：兌現雙重承諾</span></div>
+    <p><span class="lbl">① 功能</span>　逐項回收引言的承諾：更精確（R² 證據）✓、不更難用（式 11–12 封閉解）✓、似 σ（分散化）✓、勝 β（定價）✓。</p>
+    <p><span class="lbl">② 邏輯角色</span>　「不需市場資訊」是結論才點明的深層優勢：β 依賴市場組合的正確界定（Roll 批判），熵完全繞開此問題——這其實可以是更根本的理論貢獻，可惜僅一句帶過。</p>
+    <p><span class="lbl">③ 技巧與漏洞</span>　結論對熊市敗績的表述再度軟化為「情境依賴、與 β 相仿」。整體而言，本文結論的限定範圍與證據吻合度高，是值得模仿的收尾——<b>結論句式「X 在條件 C 下優於 Y」永遠好過「X 優於 Y」</b>。</p>
+  </aside>
+</div>
+</section>
+<!-- ====================== 底部論證結構總覽 ====================== -->
+<section id="overview">
+<div class="overview">
+  <div class="ohead">論證結構總覽 ｜ Argument Map</div>
+  <div class="obody">
+
+    <p style="font-weight:700;color:var(--navy);margin-bottom:8px">全文邏輯骨架</p>
+    <div class="chain">
+      <div class="step"><b>問題</b>傳統定價工具（Markowitz／CAPM）依賴常態與平穩假設，實際日報酬不常態（¶2, ¶5）</div>
+      <div class="arrow">→</div>
+      <div class="step"><b>論點</b>熵不需分布假設，可同時扮演總風險度量（似 σ）與定價風險度量（勝 β）（¶2–¶4）</div>
+      <div class="arrow">→</div>
+      <div class="step"><b>方法</b>κ 統一框架＋直方圖／核密度／樣本間距三種熵估計＋e^H 指數變換＋R² 裁判與拔靴檢定（¶10–¶16）</div>
+      <div class="arrow">→</div>
+      <div class="step"><b>證據</b>分散化行為似 σ、效率前緣雙曲線重現、長期 R²：Rényi 15.71% vs β 6.17%、充分分散下仍 1.5 倍、樣本外熵最穩（¶17–¶23）</div>
+      <div class="arrow">→</div>
+      <div class="step"><b>反駁處理</b>承認熊市中 β 勝出＋常態下熵≡σ 的理論讓步 → 以「所有度量皆情境依賴」「熊市不可事前辨識」限縮反例效力（¶4, ¶21）</div>
+      <div class="arrow">→</div>
+      <div class="step"><b>結論</b>除熊市外，熵是更精確且更可靠的風險度量，且直方圖封閉解使其不難使用（¶24）</div>
+    </div>
+
+    <p style="font-weight:700;color:var(--navy);margin:14px 0 6px">作者核心主張（一句話版本）</p>
+    <div class="claim">熵無需分布假設與市場資訊，即能以高於 CAPM 貝塔、且比貝塔與標準差都更穩定的解釋力為資產風險定價——代價僅是一條直方圖封閉解公式的計算量。</div>
+
+    <div class="sw2">
+      <div class="box strong"><b>論證最強處</b>「充分分散組合」檢驗（¶20）：作者主動走進對手主場——個別風險理應消失、β 最有利的情境——仍取得 1.5 倍解釋力優勢。先讓步機制（熵含個別風險）、再於讓步後的殘餘戰場獲勝，這種 concession–rebuttal 結構使證據幾乎無法被「熵只是混入了個別風險」一句話打發。</div>
+      <div class="box weak"><b>論證最弱處</b>關鍵超參數（Shannon 175 bins／Rényi 50 bins）的選擇過程不透明（¶11, ¶17）：正文將 bin 數選擇「推給文獻」，實際數值卻在結果一節突然出現，且附表顯示係以表現擇優——若 k 是在同一資料上調出的，樣本內 R² 比較即含資料窺探，熵的優勢被高估的可能無法排除。</div>
+    </div>
+
+    <p style="font-weight:700;color:var(--navy);margin:20px 0 6px">與你的學士論文（Shannon 熵 × TWSE 報酬預測）的四個接點</p>
+    <div class="chain" style="margin-top:4px">
+      <div class="step"><b>① H1 重構的文獻支點</b>¶21 牛熊斜率翻轉是「熵方向盲」的實證鐵證——低熵不蘊含負報酬。可直接引為你以「熵×落後報酬交互項」承載方向資訊的依據。</div>
+      <div class="step"><b>② 分箱機制批評</b>式 (11) 的 +ln h 項是「等寬分箱→熵與波動度機械相關」的公式級證據；並注意本文走「密度估計→連續熵」路線、明言排除分箱離散熵（¶9），與你的路線互為對照。</div>
+      <div class="step"><b>③ 方法設計模板</b>κ 統一框架、5+5 年滾動樣本外檢驗、剔股拔靴法皆可平移至 TWSE；但滾動視窗重疊與橫斷面殘差相關的推論問題（¶16, ¶22）你已在滾動熵議題中遇過，須一併處理。</div>
+      <div class="step"><b>④ 反面教材</b>bin 數選擇要在方法一節事前固定並辯護（如 Freedman–Diaconis），危機期界定要避免「事後標籤」——本文的熊市分樣（¶21）與你的 2025/4/7 危機期選擇面對同一個前視偏誤幽靈。</div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+</main>
+
+<footer class="credit">
+原文：Ormos M, Zibriczky D (2014) Entropy-Based Financial Asset Pricing. <i>PLoS ONE</i> 9(12): e115742. doi:10.1371/journal.pone.0115742 ｜ 依 Creative Commons Attribution License 轉載原文並加注；中文譯文為意譯，公式以 Unicode 重排，編號與原文一致。批注為精讀輔助，引用時請以原始 PDF 為準。
+</footer>
+
+</body>
+</html>
